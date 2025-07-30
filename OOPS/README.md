@@ -126,3 +126,53 @@ print(f'I am a {enemy.get_type_of_enemy()} and has health points of {enemy.healt
 ## Output
 ## I am a Zombie and has health points of 30. I can inflict a damage of 3
 ```
+
+## Inheritance
+
+* Process of acquiring properties from one class to other classes.
+* Creates a hierarchy between classes.
+
+```py
+# Parent Class // Super Class
+Class Animal:
+    weight: int
+    color: str
+    age: int
+    animal_type: str
+
+# Child Class
+Class Dog(Animal):
+    ## All Animal attributes
+    ## Additional attributes specific to Dog class
+
+    can_shed: bool
+    domestic_name: str
+```
+
+### Self vs Super
+
+* Self is used to refer to the current object that is created or being instantiated, while super is used to refer to the parent class.
+* Self is used when there is a need to differentiate between the instance variables & parameters with the same name, while super is used to call the parent class methods and/or constructors.
+
+```py
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+class Student(Person):
+    def __init__(self, name, age, degree):
+        super().__init__(name=name, age=age)
+        self.degree = degree
+```
+
+## Polymorphism
+
+* Polymorphism means to have many forms.
+
+## Composition
+
+* A way to create objects made up of other objects.
+* In composition, a class contains one or more objects of another class as instance variables.
+* Provide layered functionality to the object.
+* Known as a HAS-A relationship.
