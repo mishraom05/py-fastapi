@@ -21,6 +21,11 @@
   - You can identify the specific resources based on the file you are in:
   - */Users/username/Documents/python/fastapi/section1*
 
+## GET Request
+
+* A GET Request is used to fetch the data that is currently stored.
+* To fetch the data based on a specific parameter that is passed in the URL, `dynamic_param` is used.
+
 ```py
 @app.get("/books/{dynamic_param}")
 async def get_books_dynamic(dynamic_param):
@@ -69,4 +74,77 @@ async def get_books_dynamic(dynamic_param):
     "category": "science"
   }
 ]
+```
+
+## POST Request
+
+* This is used to create data
+* POST can have a body that has additional information that GET does not have.
+* Example of Body
+
+```json
+{
+  "title": "Title Seven",
+  "author": "Author One",
+  "category": "science"
+}
+```
+
+* Sample POST Request
+
+```py
+@app.post('/books/create_book')
+async def create_books(new_book=Body()):
+    Books.append(new_book)
+```
+
+## PUT Request
+
+* A PUT request is used to update the data.
+* PUT can have a body that has additional information (like POST) that GET does not have.
+* Example of Body
+
+```json
+// Original Values
+{
+  "title": "Title Seven",
+  "author": "Author One",
+  "category": "science"
+}
+
+// Updated value passed in PUT Request
+{
+  "title": "Title Seven",
+  "author": "Author One",
+  "category": "math"
+}
+```
+
+* Sample PUT Request
+
+```py
+@app.put('/books/update_book')
+async def update_books(updated_book=Body()):
+    for i in range(len(Books)):
+        if Books[i].get('title').casefold() == updated_book.get('title').casefold():
+            Books[i] = updated_book
+```
+
+## DELETE Request
+
+* A DELETE request is used to delete data.
+
+```yaml
+http://127.0.0.1:8000/books/delete_book/{book_title}
+```
+
+* Sample DELETE Request
+
+```py
+@app.delete('/books/delete_book/{book_title}')
+async def delete_books(book_title: str):
+    for i in range(len(Books)):
+        if Books[i].get('title').casefold() == book_title.casefold():
+            Books.pop(i)
+            break
 ```
