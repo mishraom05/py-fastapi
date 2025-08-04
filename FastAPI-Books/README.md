@@ -148,3 +148,190 @@ async def delete_books(book_title: str):
             Books.pop(i)
             break
 ```
+
+## Extending Use-Cases
+
+### Pydantic
+
+* Pydantic 1 vs Pydantic 2
+* FastAPI is now compatible with both Pydantic v1 and Pydantic v2.
+* Based on how new the version of FastAPI you are using, there could be small method name changes.
+* The three biggest are:
+  - .dict() function is now renamed to .model_dump()
+  - schema_extra function within a Config class is now renamed to json_schema_extra
+  - Optional variables need a =None example: id: Optional[int] = None
+
+### What is pydantic?
+
+* Create a different request model for data validation
+* Field Data validation on each variable/element
+
+```py
+class BookRequest(BaseModel):
+  id: int
+  title: str = Field(min_length=3)
+  author: str = Field(min_length=1, max_length=50)
+  description: str = Field(min_length=1, max_length=100)
+  rating: int = Field(gt=0, lt=6)
+```
+
+* Passing the BookRequest object onto the Book object
+
+```py
+@app.post('/create_books')
+async def create_books(book_request: BookRequest):
+  new_book = Book(**book_request.dict()) # ** <--- operator will pass the key/value from BookRequest into the Book's constructor
+  Books.append(new_book)
+```
+
+* On passing the below json 
+
+```json
+{
+  "id": 9,
+  "title": "101-Oncology",
+  "author": "Dr. James Wilson",
+  "description": "Injecting Chemo to kill cells.",
+  "rating": 4.1
+}
+```
+
+* The error code received is `422` which is `Error: Unprocessable Entity`
+
+```json
+// Response Body
+{
+  "detail": [
+    {
+      "type": "int_from_float",
+      "loc": [
+        "body",
+        "rating"
+      ],
+      "msg": "Input should be a valid integer, got a number with a fractional part",
+      "input": 4.1
+    }
+  ]
+}
+```
+
+* ModelConfig for configuring swagger to provide meaningful sample/example of json
+
+```py
+model_config = {
+        "json_schema_extra":{
+            "example":{
+                "title": "101-Example",
+                "author": "FName MName LName",
+                "description": "A short and concise description",
+                "rating": 4.9
+            }
+        }
+    }
+```
+
+## Path and Query Parameters Data Validation
+
+* Import Path and Query from fastapi to implement Path and Query parameters validation
+
+```py
+from fastapi import Body, FastAPI, Path, Query
+```
+
+* Add conditions using Path() and Query() methods to your apis for validation of data
+
+```py
+# Path Parameter 
+@app.get('/books/get_books/{published_date}')
+async def get_book_by_pub_date(pub_date: int = Path(gt=0, lt=2025)):
+  pass
+
+# Query Parameter
+@app.get('/books/')
+async def get_book_by_rating(book_rating: int = Query(gt=0, lt=6)):
+  pass
+```
+
+## Status Codes
+
+* 1xx - Information Response: Request Processing
+* 2xx - Successs: Request Successfully Complete
+  * `200:OK` - Standard Response for a successful request. Commonly used for successful Get Requests when data is being returned.
+  * `201:Created` - The request has been successful, creating a new resource. Used when a POST creates an entity.
+  * `204:No Content` - The request has been successful, did not create an entity nor return anything. Commonly used with PUT requests.
+* 3xx - Redirection: Further action must be complete
+* 4xx - Client Errors: An error was caused by the client
+  * `400:Bad Request` - Cannot process request due to client error. Commonly used for invalid request methods.
+  * `401:Unauthorized` - Client does not have valid authentication for target resource.
+  * `404:Not Found` - The clients requested resource can not be found.
+  * `422:Unprocessable entity` - Semantic errors in client request.
+  
+  ```json
+  /*
+  422
+  Error: Unprocessable Entity
+  Response body
+  */
+  {
+    "detail": [
+      {
+        "type": "greater_than",
+        "loc": [
+          "path",
+          "book_id"
+        ],
+        "msg": "Input should be greater than 0",
+        "input": "0",
+        "ctx": {
+          "gt": 0
+        }
+      }
+    ]
+  }
+  ```
+
+* 5xx - Server Errors: An error occured on the server
+  * `500:Internal Server Error` - Generic error message, when an unexpected issue on the server happened.
+
+### Raising Exception in code
+
+* To raise an exception use the HTTPException()
+* Sample code :
+
+```py
+from fastapi import HTTPException
+
+@app.get('/books/{book_id}')
+async def get_book_by_id(book_id: int = Path(gt=0)):
+    for book in Books:
+        if book.id == book_id:
+            return book
+    raise HTTPException(status_code=404, detail='Item Not Found!')
+```
+
+* Sample Output if Input for `book_id` is `10` when book_id exists between 1-8.
+
+```json
+/*404
+Undocumented
+Error: Not Found
+Response body
+*/
+{
+  "detail": "Item Not Found!"
+}
+```
+
+## Adding Status Code to the API's
+
+* Adding custom HTTP code for the API endpoints.
+
+```py
+from starlette import status
+
+# GET Request - Fetch details of all the books
+@app.get('/books', status_code=status.HTTP_200_OK)
+
+# POST Request - Create a new book        
+@app.post('/books/create_book',status_code=status.HTTP_201_CREATED)
+```
