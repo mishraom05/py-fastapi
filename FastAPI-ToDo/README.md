@@ -20,7 +20,9 @@
 * To insert data into table use the `INSERT` statement
 
 ```sql
-INSERT INTO todos (title, description, priority, complete) VALUES ('Go to store', 'To pick up eggs', 5, False);
+sqlite> INSERT INTO todos (title, description, priority, complete) VALUES ('Go to store', 'To pick up eggs', 5, False);
+sqlite> INSERT INTO todos (title, description, priority, complete) VALUES ('Cut the lawn', 'grass is getting longer', 3, False);
+sqlite> INSERT INTO todos (title, description, priority, complete) VALUES ('Feed the dog', 'Dog is hungry', 4, False);
 ```
 
 ### Fetching data from table
@@ -34,11 +36,68 @@ SELECT * FROM todos;
 * OUTPUT
 
 ```sql
-1|Go to store|To pick up eggs|5|0
+sqlite> select * from todos;
+id  title         description              priority  complete
+--  ------------  -----------------------  --------  --------
+1   Go to store   To pick up eggs          5         0
+2   Cut the lawn  grass is getting longer  3         0
+3   Feed the dog  Dog is hungry            4         0
 ```
 
 > [!NOTE]
 > Boolean value `False` is represented as `0` in sql and `True` is represented as a `1`.
+
+* To fetch the `title` from the `todos` table
+
+### Different modes in sqlite3 to support output 
+
+* There are 4 options to support the ouput in sqlite3
+  * .mode column
+  * .mode markdown
+  * .mode box
+  * .mode table
+
+* OUTPUT
+
+```sql
+sqlite> .mode column
+sqlite> select * from todos;
+id  title         description              priority  complete
+--  ------------  -----------------------  --------  --------
+1   Go to store   To pick up eggs          5         0
+2   Cut the lawn  grass is getting longer  3         0
+3   Feed the dog  Dog is hungry            4         0
+
+sqlite> .mode markdown
+sqlite> select * from todos;
+| id |    title     |       description       | priority | complete |
+|----|--------------|-------------------------|----------|----------|
+| 1  | Go to store  | To pick up eggs         | 5        | 0        |
+| 2  | Cut the lawn | grass is getting longer | 3        | 0        |
+| 3  | Feed the dog | Dog is hungry           | 4        | 0        |
+
+sqlite> .mode box
+sqlite> select * from todos;
+┌────┬──────────────┬─────────────────────────┬──────────┬──────────┐
+│ id │    title     │       description       │ priority │ complete │
+├────┼──────────────┼─────────────────────────┼──────────┼──────────┤
+│ 1  │ Go to store  │ To pick up eggs         │ 5        │ 0        │
+│ 2  │ Cut the lawn │ grass is getting longer │ 3        │ 0        │
+│ 3  │ Feed the dog │ Dog is hungry           │ 4        │ 0        │
+└────┴──────────────┴─────────────────────────┴──────────┴──────────┘
+
+sqlite> .mode table
+sqlite> select * from todos;
++----+--------------+-------------------------+----------+----------+
+| id |    title     |       description       | priority | complete |
++----+--------------+-------------------------+----------+----------+
+| 1  | Go to store  | To pick up eggs         | 5        | 0        |
+| 2  | Cut the lawn | grass is getting longer | 3        | 0        |
+| 3  | Feed the dog | Dog is hungry           | 4        | 0        |
++----+--------------+-------------------------+----------+----------+
+```
+
+### List of other SQL queries
 
 * To fetch the `title` from the `todos` table
 
@@ -84,7 +143,31 @@ UPDATE todos SET complete=True WHERE title='Learn something new';
 * To DELETE all the rows WHERE id is equal to 5
 
 ```sql
-DELETE FROM todos WHERE id=5;
+DELETE FROM todos WHERE id=4;
+```
+
+* OUTPUT 
+
+```sql
+sqlite> select * from todos;
++----+--------------+-------------------------+----------+----------+
+| id |    title     |       description       | priority | complete |
++----+--------------+-------------------------+----------+----------+
+| 1  | Go to store  | To pick up eggs         | 5        | 0        |
+| 2  | Cut the lawn | grass is getting longer | 3        | 0        |
+| 3  | Feed the dog | Dog is hungry           | 4        | 0        |
+| 4  | Test Element | Testing Description     | 4        | 0        |
++----+--------------+-------------------------+----------+----------+
+
+sqlite> DELETE FROM todos WHERE id=4;
+sqlite> select * from todos;
++----+--------------+-------------------------+----------+----------+
+| id |    title     |       description       | priority | complete |
++----+--------------+-------------------------+----------+----------+
+| 1  | Go to store  | To pick up eggs         | 5        | 0        |
+| 2  | Cut the lawn | grass is getting longer | 3        | 0        |
+| 3  | Feed the dog | Dog is hungry           | 4        | 0        |
++----+--------------+-------------------------+----------+----------+
 ```
 
 > [!NOTE]
@@ -95,4 +178,3 @@ DELETE FROM todos WHERE complete=0;
 ```
 
 > This method is not advisable as the query has the potential to delete all rows of `todos` table. It is advised to use primary key field for the deletion purpose.
-
