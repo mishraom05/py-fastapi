@@ -13,7 +13,7 @@
 
 |Id(PK)|title|description|priority|complete|owner(FK)|
 |------|-----|-----------|--------|--------|---------|
-|------|-----|-----------|--------|--------|---------|
+|      |     |           |        |        |         |
 
 ### Inserting data into table
 
@@ -37,8 +37,8 @@ SELECT * FROM todos;
 1|Go to store|To pick up eggs|5|0
 ```
 
-[!NOTE]
-Boolean value `False` is represented as `0` in sql and `True` is represented as a `1`.
+> [!NOTE]
+> Boolean value `False` is represented as `0` in sql and `True` is represented as a `1`.
 
 * To fetch the `title` from the `todos` table
 
@@ -70,15 +70,14 @@ SELECT * WHERE PRIORITY=5 FROM todos;
 UPDATE todos SET complete=True WHERE id=5;
 ```
 
-[!NOTE]
-
-* You can update the column `complete` by executing the below `UPDATE` query
+> [!NOTE]
+> You can update the column `complete` by executing the below `UPDATE` query
 
 ```sql
 UPDATE todos SET complete=True WHERE title='Learn something new';
 ```
 
-* This method is not advisable as contents of column `title` is not unique.
+> This method is not advisable as contents of column `title` is not unique.
 
 ### `DELETE` sql queries
 
@@ -88,13 +87,12 @@ UPDATE todos SET complete=True WHERE title='Learn something new';
 DELETE FROM todos WHERE id=5;
 ```
 
-[!NOTE]
-
-* You can delete the rows by executing the below `DELETE` query
+> [!NOTE]
+> You can delete the rows by executing the below `DELETE` query
 
 ```sql
 DELETE FROM todos WHERE complete=0;
 ```
 
-* This method is not advisable as the query has the potential to delete all rows of `todos` table. It is advised to use primary key field for the deletion purpose.
+> This method is not advisable as the query has the potential to delete all rows of `todos` table. It is advised to use primary key field for the deletion purpose.
 
